@@ -4,7 +4,7 @@ import copy
 # from scipy.optimize import minimize
 from collections.abc import Sequence
 from .scan import Scan
-from .func import MIN_STEP
+from .curve import MIN_STEP
 from intervalpy import Interval
 from .const import GOLD, GOLD_2
 

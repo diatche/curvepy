@@ -2,7 +2,7 @@ import warnings
 from .extension import Extension
 from ..constant import Constant
 from ..empty import Empty
-from ..func import Curve
+from ..curve import Curve
 
 class HarmonicExtension(Extension):
 
@@ -29,7 +29,7 @@ class HarmonicExtension(Extension):
             raise Exception('Weave extension currently only supports extending the end')
 
     def update_extension(self):
-        x = self.func.domain.end
+        x = self.curve.domain.end
         y = self._fast_sma.y(x)
         y_ext = self.end_func.y(x)
         
@@ -42,7 +42,7 @@ class HarmonicExtension(Extension):
 
     def create_extension_func(self, start=False):
         base_line = Constant(0)
-        hsmas = reversed(self.func.harmonic_smas(
+        hsmas = reversed(self.curve.harmonic_smas(
             self.period,
             self.degree,
             stride=1,

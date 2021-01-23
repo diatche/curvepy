@@ -24,7 +24,7 @@ class WeaveExtension(Extension):
             self.setup()
 
     def y_extension(self, x):
-        if self.end and x >= self.func.domain.end:
+        if self.end and x >= self.curve.domain.end:
             self.accumulate(x)
             return self.extension.y(x)
         return None
@@ -35,10 +35,10 @@ class WeaveExtension(Extension):
             self.extension_interval = self.get_extension_interval()
 
     def get_extension_interval(self):
-        if self.end and not self.func.domain.is_empty:
-            smas = list(map(lambda sma: sma.y(self.func.domain.end), self.smas))
+        if self.end and not self.curve.domain.is_empty:
+            smas = list(map(lambda sma: sma.y(self.curve.domain.end), self.smas))
             if len(list(filter(None, smas))) == len(smas):
-                return Interval.positive_infinite(self.func.domain.end, open=False)
+                return Interval.positive_infinite(self.curve.domain.end, open=False)
         # Not enough data
         return Interval.empty()
 
@@ -132,7 +132,7 @@ class WeaveExtension(Extension):
 
     # def setup(self):
     #     self.extension = Points([])
-    #     self.layers = Curve.first([self.func, self.extension])
+    #     self.layers = Curve.first([self.curve, self.extension])
     #     self.periods = []
     #     self.smas = []
     #     self.macs = []

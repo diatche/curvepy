@@ -1,6 +1,6 @@
 import bisect
 from .scan import Scan
-from .func import Curve, MIN_STEP
+from .curve import Curve, MIN_STEP
 from intervalpy import Interval
 
 class Extremas(Scan):
@@ -50,7 +50,7 @@ class Extremas(Scan):
             if x1 > x - min_step:
                 x1 = self.extremas[i - 1][0]
             return x1
-        return self.func.x_previous(x, min_step=min_step, limit=limit)
+        return self.curve.x_previous(x, min_step=min_step, limit=limit)
 
     def x_next(self, x, min_step=MIN_STEP, limit=None):
         min_step = self.resolve_min_step(min_step)
@@ -60,7 +60,7 @@ class Extremas(Scan):
             if x1 < x + min_step:
                 x1 = self.extremas[i + 1][0]
             return x1
-        return self.func.x_next(x, min_step=min_step, limit=limit)
+        return self.curve.x_next(x, min_step=min_step, limit=limit)
 
     def begin_update(self, domain):
         super().begin_update(domain)

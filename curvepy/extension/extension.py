@@ -1,4 +1,4 @@
-from ..func import Curve, MIN_STEP
+from ..curve import Curve, MIN_STEP
 from intervalpy import Interval
 
 class Extension(Curve):
@@ -11,15 +11,15 @@ class Extension(Curve):
 
     def get_domain(self):
         self._update_extension_interval()
-        return Interval.union([self.func.domain, self.extension_interval])
+        return Interval.union([self.curve.domain, self.extension_interval])
 
     def __init__(self, func, start=True, end=True, uniform=True, raise_on_empty=False, min_step=MIN_STEP):
         super().__init__(min_step=min_step)
-        self.func = Curve.parse(func)
+        self.curve = Curve.parse(func)
 
-        if self.func.domain.is_negative_infinite:
+        if self.curve.domain.is_negative_infinite:
             start = False
-        if self.func.domain.is_positive_infinite:
+        if self.curve.domain.is_positive_infinite:
             end = False
 
         self.start = start
@@ -31,7 +31,7 @@ class Extension(Curve):
         self.extension_interval = Interval.empty()
         self._extension_stale = True
         self._extension_interval_stale = True
-        self.func.add_observer(begin=self.begin_extension_update, end=self.end_extension_update, prioritize=True)
+        self.curve.add_observer(begin=self.begin_extension_update, end=self.end_extension_update, prioritize=True)
         self.start_func = None
         self.end_func = None
         if self.start:
@@ -42,7 +42,7 @@ class Extension(Curve):
             self.end_func.add_observer(self, begin=self.begin_update, end=self.end_update)
 
     def __del__(self):
-        self.func.remove_observer(self)
+        self.curve.remove_observer(self)
 
     def __repr__(self):
         try:
@@ -51,7 +51,7 @@ class Extension(Curve):
                 vals.append('start')
             if self.end:
                 vals.append('end')
-            return f'{self.func}.extension({", ".join(vals)})'
+            return f'{self.curve}.extension({", ".join(vals)})'
         except Exception as e:
             return super().__repr__() + f'({e})'
 
@@ -74,41 +74,41 @@ class Extension(Curve):
         """
         Return the value of the extension for a given `x` value.
         """
-        if self.func.domain.is_empty:
+        if self.curve.domain.is_empty:
             return None
-        if self.start and x <= self.func.domain.start:
+        if self.start and x <= self.curve.domain.start:
             return self.start_func.y(x)
-        if self.end and x >= self.func.domain.end:
+        if self.end and x >= self.curve.domain.end:
             return self.end_func.y(x)
         return None
 
     def y(self, x):
-        if self.func.domain.contains(x):
-            return self.func.y(x)
+        if self.curve.domain.contains(x):
+            return self.curve.y(x)
         self._update_extension_if_needed()
         if self.extension_interval.contains(x):
             return self.y_extension(x)
         return None
 
     def x_previous(self, x, min_step=MIN_STEP, limit=None):
-        x1 = self.func.x_previous(x, min_step=min_step)
+        x1 = self.curve.x_previous(x, min_step=min_step)
         if x1 is None and self.start:
             # Keep returning extension with same step
-            x0 = self.func.x_next(self.func.domain.start, min_step=min_step, limit=limit)
+            x0 = self.curve.x_next(self.curve.domain.start, min_step=min_step, limit=limit)
             if x0 is None:
                 return None
-            step = x0 - self.func.domain.start
+            step = x0 - self.curve.domain.start
             x1 = x - step
         return x1
 
     def x_next(self, x, min_step=MIN_STEP, limit=None):
-        x1 = self.func.x_next(x, min_step=min_step)
+        x1 = self.curve.x_next(x, min_step=min_step)
         if x1 is None and self.end:
             # Keep returning extension with same step
-            x0 = self.func.x_previous(self.func.domain.end, min_step=min_step, limit=limit)
+            x0 = self.curve.x_previous(self.curve.domain.end, min_step=min_step, limit=limit)
             if x0 is None:
                 return None
-            step = self.func.domain.end - x0
+            step = self.curve.domain.end - x0
             x1 = x + step
         return x1
 
@@ -141,9 +141,9 @@ class Extension(Curve):
         if self.start and self.start_valid and self.end and self.end_valid:
             self.extension_interval = Interval.union([self.start_func.domain, self.end_func.domain])
         elif self.start and self.start_valid:
-            self.extension_interval = Interval.intersection([self.start_func.domain, self.func.domain.rest_to_negative_infinity()])
+            self.extension_interval = Interval.intersection([self.start_func.domain, self.curve.domain.rest_to_negative_infinity()])
         elif self.end and self.end_valid:
-            self.extension_interval = Interval.intersection([self.end_func.domain, self.func.domain.rest_to_positive_infinity()])
+            self.extension_interval = Interval.intersection([self.end_func.domain, self.curve.domain.rest_to_positive_infinity()])
         else:
             self.extension_interval = Interval.empty()
         self.update_extension_interval()

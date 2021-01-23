@@ -1,4 +1,4 @@
-from .func import Curve, MIN_STEP
+from .curve import Curve, MIN_STEP
 from .map import Map
 from .points import Points
 from intervalpy import Interval

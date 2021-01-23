@@ -1,6 +1,6 @@
 import math
 from .accumulator import Accumulator
-from .func import Curve, MIN_STEP
+from .curve import Curve, MIN_STEP
 from intervalpy import Interval
 
 class EMA(Accumulator):
@@ -22,7 +22,7 @@ class EMA(Accumulator):
 
     def __repr__(self):
         try:
-            return f'{self.func}.ema({self.alpha or self.period})'
+            return f'{self.curve}.ema({self.alpha or self.period})'
         except Exception as e:
             return super().__repr__() + f'({e})'
 
@@ -34,7 +34,7 @@ class EMA(Accumulator):
     #         period = 1 / self.alpha
     #     else:
     #         raise Exception('Bad SMA configuration')       
-    #     return self.func.x_next(x - period, min_step=self.min_step)
+    #     return self.curve.x_next(x - period, min_step=self.min_step)
 
     def _ema_scan(self, x, y, ema):
         if y is None:
@@ -46,7 +46,7 @@ class EMA(Accumulator):
                 return y
         if self.period is not None:
             # TODO: use geometric mean instead of arithmetic?
-            x0 = self.func.x_previous(x, min_step=self.min_step)
+            x0 = self.curve.x_previous(x, min_step=self.min_step)
             a = abs((x - x0) / self.period)
             return ema + a * (y - ema)
         elif self.alpha is not None:
@@ -55,7 +55,7 @@ class EMA(Accumulator):
 
 # # Reference: http://www.thalesians.com/archive/public/academic/finance/papers/Zumbach_2000.pdf
 # x0 = self.x_previous(x, min_step=self.min_step)
-# y0 = self.func(x0)
+# y0 = self.curve(x0)
 # x_delta = abs(x - x0)
 # a = abs(x_delta / self.period)
 # u = math.exp(-a)

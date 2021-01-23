@@ -2,7 +2,7 @@ import pytest
 import math
 import numpy as np
 from pytest import approx
-from curvepy.func import Curve
+from curvepy.curve import Curve
 from curvepy.constant import Constant
 from curvepy.points import Points
 from curvepy.line import Line

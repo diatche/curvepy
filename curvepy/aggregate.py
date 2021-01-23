@@ -1,4 +1,4 @@
-from .func import Curve, MIN_STEP
+from .curve import Curve, MIN_STEP
 from intervalpy import Interval
 from collections.abc import Sequence
 

@@ -1,5 +1,5 @@
 import math
-from .func import Curve, MIN_STEP
+from .curve import Curve, MIN_STEP
 from .points import Points
 from .integral import Integral
 from intervalpy import Interval
@@ -11,11 +11,11 @@ class SMA(Integral):
     """
 
     def get_domain(self):
-        d = self.func.domain
+        d = self.curve.domain
         if d.is_empty:
             return Interval.empty()
         if self.period is not None:
-            x = self.func.x_previous(d.start + self.period, min_step=self.min_step)
+            x = self.curve.x_previous(d.start + self.period, min_step=self.min_step)
             if x is None:
                 p = self.period
             else:
@@ -23,7 +23,7 @@ class SMA(Integral):
         elif self.degree is not None:
             x = d.start
             for _ in range(self.degree - 1):
-                x = self.func.x_next(x, min_step=self.min_step)
+                x = self.curve.x_next(x, min_step=self.min_step)
                 if x is None:
                     return Interval.empty()
             p = x - d.start
@@ -49,17 +49,17 @@ class SMA(Integral):
 
     def __repr__(self):
         try:
-            return f'{self.func}.sma({self.degree or self.period})'
+            return f'{self.curve}.sma({self.degree or self.period})'
         except Exception as e:
             return super().__repr__() + f'({e})'
 
     def init_scan(self, x):
         return x
-        # if self.func.domain.is_empty or self.func.domain.is_negative_infinite:
+        # if self.curve.domain.is_empty or self.curve.domain.is_negative_infinite:
         #     return x
-        # x0 = self.func.x_previous(x, min_step=self.min_step)
+        # x0 = self.curve.x_previous(x, min_step=self.min_step)
         # if not self.domain.contains(x0):
-        #     x0 = self.func.x_next(self.func.domain.start, min_step=self.min_step)
+        #     x0 = self.curve.x_next(self.curve.domain.start, min_step=self.min_step)
         # return x0
 
     def offset_scan(self, x):
@@ -75,7 +75,7 @@ class SMA(Integral):
         x1 = self._sma_end(x0)
         if x0 == x or x0 == x1:
             # SMA step is smaller than or equal to the underlying step
-            return self.func.y(x)
+            return self.curve.y(x)
 
         # Values must be accessed in ascending order
         y0 = super().y(x0)
@@ -91,7 +91,7 @@ class SMA(Integral):
 
         # Handle offset
         if x > x1:
-            x2 = self.func.x_next(x1, min_step=self.min_step)
+            x2 = self.curve.x_next(x1, min_step=self.min_step)
             if x2 == x:
                 return sma1
             sma2 = self.y(x2)
@@ -100,7 +100,7 @@ class SMA(Integral):
             u = (x - x1) / (x2 - x1)
             sma = u * sma2 + (1 - u) * sma1
         else:
-            x01 = self.func.x_previous(x1, min_step=self.min_step)
+            x01 = self.curve.x_previous(x1, min_step=self.min_step)
             if x01 == x:
                 return sma1
             sma01 = self.y(x01)
@@ -113,11 +113,11 @@ class SMA(Integral):
 
     def _sma_start(self, x):
         if self.period is not None:
-            x0 = self.func.x_next(x - self.period, min_step=self.min_step)
+            x0 = self.curve.x_next(x - self.period, min_step=self.min_step)
         elif self.degree is not None:
             x0 = x
             for _ in range(0, self.degree - 1):
-                x1 = self.func.x_previous(x0, min_step=self.min_step)
+                x1 = self.curve.x_previous(x0, min_step=self.min_step)
                 if x1 is None:
                     return x0
                 x0 = x1
@@ -127,11 +127,11 @@ class SMA(Integral):
 
     def _sma_end(self, x):
         if self.period is not None:
-            x0 = self.func.x_previous(x + self.period, min_step=self.min_step)
+            x0 = self.curve.x_previous(x + self.period, min_step=self.min_step)
         elif self.degree is not None:
             x0 = x
             for _ in range(0, self.degree - 1):
-                x1 = self.func.x_next(x0, min_step=self.min_step)
+                x1 = self.curve.x_next(x0, min_step=self.min_step)
                 if x1 is None:
                     return x0
                 x0 = x1

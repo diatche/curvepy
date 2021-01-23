@@ -24,58 +24,58 @@ class TangentExtension(Extension):
 
     def update_extension(self):
         if self.start:
-            x = self.func.domain.start
-            if x is not None and self.func.domain.start_open and self.func.domain.contains(x + self.min_step):
+            x = self.curve.domain.start
+            if x is not None and self.curve.domain.start_open and self.curve.domain.contains(x + self.min_step):
                 x += self.min_step
             y = None
             d_y = None
             if self.regression_degree is not None:
                 x1 = x
                 for i in range(self.regression_degree):
-                    x1 = self.func.x_next(x1, min_step=self.min_step)
+                    x1 = self.curve.x_next(x1, min_step=self.min_step)
                 domain = Interval(x, x1)
-                tangent = self.func.regression(domain, min_step=self.min_step)
+                tangent = self.curve.regression(domain, min_step=self.min_step)
                 if tangent is not None:
                     y = tangent.y(x)
                     d_y = tangent.slope
             elif self.regression_period is not None:
                 domain = Interval(x, x + self.regression_period)
-                tangent = self.func.regression(domain, min_step=self.min_step)
+                tangent = self.curve.regression(domain, min_step=self.min_step)
                 if tangent is not None:
                     y = tangent.y(x)
                     d_y = tangent.slope
             else:
-                y = self.func.y(x)
-                d_y = self.func.d_y(x, forward=True)
+                y = self.curve.y(x)
+                d_y = self.curve.d_y(x, forward=True)
 
             self.start_valid = y is not None and d_y is not None
             if self.start_valid:
                 self.update_extension_func(self.start_func, x, y, d_y)
 
         if self.end:
-            x = self.func.domain.end
-            if x is not None and self.func.domain.end_open and self.func.domain.contains(x - self.min_step):
+            x = self.curve.domain.end
+            if x is not None and self.curve.domain.end_open and self.curve.domain.contains(x - self.min_step):
                 x -= self.min_step
             y = None
             d_y = None
             if self.regression_degree is not None:
                 x0 = x
                 for i in range(self.regression_degree):
-                    x0 = self.func.x_previous(x0, min_step=self.min_step)
+                    x0 = self.curve.x_previous(x0, min_step=self.min_step)
                 domain = Interval(x0, x)
-                tangent = self.func.regression(domain, min_step=self.min_step)
+                tangent = self.curve.regression(domain, min_step=self.min_step)
                 if tangent is not None:
                     y = tangent.y(x)
                     d_y = tangent.slope
             elif self.regression_period is not None:
                 domain = Interval(x - self.regression_period, x)
-                tangent = self.func.regression(domain, min_step=self.min_step)
+                tangent = self.curve.regression(domain, min_step=self.min_step)
                 if tangent is not None:
                     y = tangent.y(x)
                     d_y = tangent.slope
             else:
-                y = self.func.y(x)
-                d_y = self.func.d_y(x, forward=False)
+                y = self.curve.y(x)
+                d_y = self.curve.d_y(x, forward=False)
 
             self.end_valid = y is not None and d_y is not None
             if self.end_valid:

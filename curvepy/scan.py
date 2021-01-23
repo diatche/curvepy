@@ -1,29 +1,29 @@
 import math
-from .func import Curve, MIN_STEP
+from .curve import Curve, MIN_STEP
 from .constant import Constant
 from intervalpy import Interval
 
 class Scan(Curve):
 
     def get_domain(self):
-        return self.func.domain
+        return self.curve.domain
 
     def __init__(self, func, tfm, min_step=MIN_STEP):
         super().__init__(min_step=min_step)
-        self.func = Curve.parse(func)
+        self.curve = Curve.parse(func)
         self.tfm = tfm
         self.scan_start = None
         self.current = None
-        self._observer_token = self.func.add_observer(begin=self.begin_scan_update, end=self.end_scan_update, prioritize=True)
+        self._observer_token = self.curve.add_observer(begin=self.begin_scan_update, end=self.end_scan_update, prioritize=True)
 
     def __del__(self):
         try:
-            self.func.remove_observer(self._observer_token)
+            self.curve.remove_observer(self._observer_token)
         except Exception:
             pass
 
     def y(self, x):
-        if not self.func.domain.contains(x) and not self.domain.contains(x):
+        if not self.curve.domain.contains(x) and not self.domain.contains(x):
             return None
         self.scan(x)
         return self.scanned_y(x)
@@ -35,11 +35,11 @@ class Scan(Curve):
         return self.current < x
 
     def init_scan(self, x):
-        if self.func.domain.is_empty or self.func.domain.is_negative_infinite:
+        if self.curve.domain.is_empty or self.curve.domain.is_negative_infinite:
             return x
-        x0 = self.func.domain.start
+        x0 = self.curve.domain.start
         if not self.domain.contains(x0):
-            x0 = self.func.x_next(x0, min_step=self.min_step)
+            x0 = self.curve.x_next(x0, min_step=self.min_step)
         return x0
 
     def offset_scan(self, x):
@@ -59,11 +59,11 @@ class Scan(Curve):
                 current = self.scan_start
             else:
                 current = self.x_next(self.current, min_step=self.min_step, limit=x0)
-            if current is None or not self.func.domain.contains(current):
+            if current is None or not self.curve.domain.contains(current):
                 break
             if self.current is not None and current <= self.current:
                 raise Exception('Next scan x value ({}) is smaller than or equal to the current scan x value ({}).'.format(current, self.current))
-            self.tfm(current, self.func.y(current))
+            self.tfm(current, self.curve.y(current))
             self.current = current
 
     def sample_points(self, domain=None, min_step=MIN_STEP, step=None):
@@ -82,11 +82,11 @@ class Scan(Curve):
 
     def x_previous(self, x, min_step=MIN_STEP, limit=None):
         min_step = self.resolve_min_step(min_step)
-        return self.func.x_previous(x, min_step=min_step, limit=limit)
+        return self.curve.x_previous(x, min_step=min_step, limit=limit)
 
     def x_next(self, x, min_step=MIN_STEP, limit=None):
         min_step = self.resolve_min_step(min_step)
-        return self.func.x_next(x, min_step=min_step, limit=limit)
+        return self.curve.x_next(x, min_step=min_step, limit=limit)
 
     def begin_scan_reset(self):
         self.reset_scan()

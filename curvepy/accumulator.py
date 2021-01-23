@@ -1,7 +1,7 @@
 import math
 from .scan import Scan
 from .points import Points
-from .func import MIN_STEP
+from .curve import MIN_STEP
 from intervalpy import Interval
 
 class Accumulator(Scan):
@@ -27,11 +27,11 @@ class Accumulator(Scan):
 
     def x_previous(self, x, min_step=MIN_STEP, limit=None):
         min_step = self.resolve_min_step(min_step)
-        return self.accumulated_points.x_previous(x, min_step=min_step, limit=limit) or self.func.x_previous(x, min_step=min_step, limit=limit)
+        return self.accumulated_points.x_previous(x, min_step=min_step, limit=limit) or self.curve.x_previous(x, min_step=min_step, limit=limit)
 
     def x_next(self, x, min_step=MIN_STEP, limit=None):
         min_step = self.resolve_min_step(min_step)
-        return self.accumulated_points.x_next(x, min_step=min_step, limit=limit) or self.func.x_next(x, min_step=min_step, limit=limit)
+        return self.accumulated_points.x_next(x, min_step=min_step, limit=limit) or self.curve.x_next(x, min_step=min_step, limit=limit)
 
     def begin_update(self, domain):
         self.accumulated_points.reset(domain)

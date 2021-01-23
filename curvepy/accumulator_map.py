@@ -1,5 +1,5 @@
 from .accumulator import Accumulator
-from .func import MIN_STEP
+from .curve import MIN_STEP
 from intervalpy import Interval
 
 
@@ -43,7 +43,7 @@ class AccumulatorMap(Accumulator):
         points = [[x, y]]
         if self.degree is not None:
             if self.degree != 1:
-                points += self.func.sample_points_from_x(
+                points += self.curve.sample_points_from_x(
                     x,
                     self.degree - 1,
                     backward=True,
@@ -51,7 +51,7 @@ class AccumulatorMap(Accumulator):
                     min_step=self.min_step
                 )
         elif self.period is not None:
-            points += reversed(self.func.sample_points(
+            points += reversed(self.curve.sample_points(
                 domain=Interval.closed_open(x - self.period, x),
                 min_step=self.min_step
             ))

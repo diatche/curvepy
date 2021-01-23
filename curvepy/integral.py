@@ -1,7 +1,7 @@
 from .accumulator import Accumulator
 from .line import Line
 from .points import Points
-from .func import MIN_STEP
+from .curve import MIN_STEP
 from intervalpy import Interval
 
 
@@ -27,7 +27,7 @@ class Integral(Accumulator):
 
         x0 = self.accumulated_points.x_previous(x)
         if x0 is not None:
-            y0 = self.func.y(x0)
+            y0 = self.curve.y(x0)
         else:
             y0 = None
 

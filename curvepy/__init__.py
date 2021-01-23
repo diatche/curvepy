@@ -1,5 +1,5 @@
 from .const import GOLD
-from .func import Curve, MIN_STEP
+from .curve import Curve, MIN_STEP
 from .extension.tangent import TangentExtension
 from .extension.constant import ConstantExtension
 from .accumulator import Accumulator

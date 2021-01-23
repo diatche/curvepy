@@ -1,5 +1,5 @@
 import math
-from .func import Curve, MIN_STEP
+from .curve import Curve, MIN_STEP
 from intervalpy import Interval
 from pyduration import Duration
 
@@ -11,39 +11,39 @@ class Offset(Curve):
     """
 
     def get_domain(self):
-        return self._offset_interval(self.func.domain)
+        return self._offset_interval(self.curve.domain)
 
     def __init__(self, func, offset, duration=None):
         super().__init__()
-        self.func = Curve.parse(func)
+        self.curve = Curve.parse(func)
         self.offset = offset
         self.duration = None
         if duration is not None:
             self.duration = Duration.parse(duration)
             if type(self.offset) != int:
                 raise Exception('Offset must be an interger when duration is defined')
-        self._observer_token = self.func.add_observer(
+        self._observer_token = self.curve.add_observer(
             begin=self.begin_offset_update, end=self.end_offset_update, prioritize=True)
 
     def __del__(self):
-        self.func.remove_observer(self._observer_token)
+        self.curve.remove_observer(self._observer_token)
 
     def __repr__(self):
         try:
-            return f'{self.func}.offset({self.offset})'
+            return f'{self.curve}.offset({self.offset})'
         except Exception as e:
             return super().__repr__() + f'({e})'
 
     def y(self, x):
-        return self._interpolated_func(self.func.y, x)
+        return self._interpolated_func(self.curve.y, x)
 
     def d_y(self, x, **kwargs):
-        return self._interpolated_func(self.func.d_y, x, **kwargs)
+        return self._interpolated_func(self.curve.d_y, x, **kwargs)
 
     def _interpolated_func(self, f, x, **kwargs):
         x0 = self._unoffset_x(x, floor=True)
         x1 = self._unoffset_x(x, floor=False)
-        if x0 is None or x1 is None or not self.func.domain.contains(x0) or not self.func.domain.contains(x1):
+        if x0 is None or x1 is None or not self.curve.domain.contains(x0) or not self.curve.domain.contains(x1):
             return None
         if x0 == x1:
             return f(x0, **kwargs)
@@ -66,8 +66,8 @@ class Offset(Curve):
         if self.duration:
             x1 = self.duration.previous(x)
         else:
-            x1 = self.func.x_previous(x, min_step=min_step, limit=limit)
-        if x1 is None or not self.func.domain.contains(x1):
+            x1 = self.curve.x_previous(x, min_step=min_step, limit=limit)
+        if x1 is None or not self.curve.domain.contains(x1):
             return None
         return self._offset_x(x1, floor=False)
 
@@ -78,8 +78,8 @@ class Offset(Curve):
         if self.duration:
             x1 = self.duration.next(x)
         else:
-            x1 = self.func.x_next(x, min_step=min_step, limit=limit)
-        if x1 is None or not self.func.domain.contains(x1):
+            x1 = self.curve.x_next(x, min_step=min_step, limit=limit)
+        if x1 is None or not self.curve.domain.contains(x1):
             return None
         return self._offset_x(x1, floor=True)
 
