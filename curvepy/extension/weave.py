@@ -38,7 +38,7 @@ class WeaveExtension(Extension):
         if self.end and not self.curve.domain.is_empty:
             smas = list(map(lambda sma: sma.y(self.curve.domain.end), self.smas))
             if len(list(filter(None, smas))) == len(smas):
-                return Interval.positive_infinite(self.curve.domain.end, open=False)
+                return Interval.gte(self.curve.domain.end)
         # Not enough data
         return Interval.empty()
 

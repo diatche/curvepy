@@ -610,9 +610,9 @@ class TrendLine(Sequence):
         # search up to the last intersection or tangent point
         update_interval = self.search_interval
         if len(self.intersections) != 0:
-            update_interval = Interval.intersection([update_interval, Interval.positive_infinite(self.intersections[-1][0], open=False)])
+            update_interval = Interval.intersection([update_interval, Interval.gte(self.intersections[-1][0])])
         if len(self.tangent_points) != 0:
-            update_interval = Interval.intersection([update_interval, Interval.positive_infinite(self.tangent_points[-1][0], open=True)])
+            update_interval = Interval.intersection([update_interval, Interval.gt(self.tangent_points[-1][0])])
 
         for i in reversed(range(len(underlying_points))):
             p = underlying_points[i]

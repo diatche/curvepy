@@ -224,7 +224,7 @@ class Quote:
 
         missing_list = []
         head = Interval.intersection(
-            [domain, quotes[0].domain.rest_to_negative_infinity()])
+            [domain, quotes[0].domain.get_lt()])
         if not head.is_empty:
             missing_list.append(head)
 
@@ -242,7 +242,7 @@ class Quote:
                 missing_list.append(missing)
 
         tail = Interval.intersection(
-            [domain, quotes[-1].domain.rest_to_positive_infinity()])
+            [domain, quotes[-1].domain.get_gt()])
         if not tail.is_empty:
             missing_list.append(tail)
 
@@ -337,8 +337,8 @@ class Quote:
         ohlc = [q0.close] * 4
         quotes = []
         domain = Interval.intersection([
-            q0.domain.rest_to_positive_infinity(),
-            q1.domain.rest_to_negative_infinity()
+            q0.domain.get_gt(),
+            q1.domain.get_lt()
         ])
         assert domain.is_finite
         for span in resolution.iterate(domain, start_open=domain.start_open):
@@ -384,14 +384,14 @@ class Quote:
 
         # Fill start
         q = quotes[0]
-        start_domain = q.domain.rest_to_negative_infinity() & domain
+        start_domain = q.domain.get_lt() & domain
         if not start_domain.is_empty:
             start_quotes = cls.empty_list(q.open, q.resolution, start_domain)
             quotes[0:0] = start_quotes
         
         # Fill end
         q = quotes[-1]
-        end_domain = q.domain.rest_to_positive_infinity() & domain
+        end_domain = q.domain.get_gt() & domain
         if not end_domain.is_empty:
             end_quotes = cls.empty_list(q.close, q.resolution, end_domain)
             iend = len(quotes)

@@ -48,10 +48,10 @@ def test_sample_infinite():
         f.sample_points(domain=Interval.infinite())
 
     with pytest.raises(Exception):
-        f.sample_points(domain=Interval.positive_infinite(0))
+        f.sample_points(domain=Interval.gte(0))
 
     with pytest.raises(Exception):
-        f.sample_points(domain=Interval.negative_infinite(0))
+        f.sample_points(domain=Interval.lte(0))
 
 
 def test_func_update():
@@ -201,7 +201,7 @@ def test_first():
 
     first = Curve.first([
         Generic(lambda x: 1, domain=Interval(0, 2)),
-        Generic(lambda x: 2, domain=Interval.positive_infinite(1))
+        Generic(lambda x: 2, domain=Interval.gte(1))
     ])
     assert first(-1) is None
     assert first(0) == 1

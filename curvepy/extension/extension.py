@@ -141,9 +141,9 @@ class Extension(Curve):
         if self.start and self.start_valid and self.end and self.end_valid:
             self.extension_interval = Interval.union([self.start_func.domain, self.end_func.domain])
         elif self.start and self.start_valid:
-            self.extension_interval = Interval.intersection([self.start_func.domain, self.curve.domain.rest_to_negative_infinity()])
+            self.extension_interval = Interval.intersection([self.start_func.domain, self.curve.domain.get_lt()])
         elif self.end and self.end_valid:
-            self.extension_interval = Interval.intersection([self.end_func.domain, self.curve.domain.rest_to_positive_infinity()])
+            self.extension_interval = Interval.intersection([self.end_func.domain, self.curve.domain.get_gt()])
         else:
             self.extension_interval = Interval.empty()
         self.update_extension_interval()
