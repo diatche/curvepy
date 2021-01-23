@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from func.line import Line
+from curvepy.line import Line
 
 
 def test_line():

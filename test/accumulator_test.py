@@ -1,5 +1,5 @@
 import pytest
-from func.accumulator import Accumulator
+from curvepy.accumulator import Accumulator
 
 def test_x():
     f = Accumulator([(1, 1), (2, 2), (3, 3)], lambda x, y, _: y)

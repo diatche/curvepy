@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from func.points import Points
+from curvepy.points import Points
 from pyduration import Duration
 from . import test_util
 

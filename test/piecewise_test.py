@@ -1,8 +1,8 @@
 import pytest
 import numpy as np
-from func.piecewise import Piecewise
-from func.constant import Constant
-from func.points import Points
+from curvepy.piecewise import Piecewise
+from curvepy.constant import Constant
+from curvepy.points import Points
 from intervalpy import Interval
 from . import test_util
 

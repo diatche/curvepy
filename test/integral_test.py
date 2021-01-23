@@ -1,7 +1,7 @@
 import pytest
-from func.constant import Constant
-from func.line import Line
-from func.points import Points
+from curvepy.constant import Constant
+from curvepy.line import Line
+from curvepy.points import Points
 from . import test_util
 
 

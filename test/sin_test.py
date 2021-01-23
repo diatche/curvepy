@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 from pytest import approx
-from func.sin import Sin
+from curvepy.sin import Sin
 
 def test_sin():
     s = Sin(amplitude=1, period=4)

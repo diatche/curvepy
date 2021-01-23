@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 from pytest import approx
-from func.points import Points
+from curvepy.points import Points
 from intervalpy import Interval
 from . import test_util
 

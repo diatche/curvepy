@@ -1,5 +1,5 @@
 import pytest
-from func.points import Points
+from curvepy.points import Points
 from .. import test_util
 
 def test_values_end():

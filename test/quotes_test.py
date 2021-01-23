@@ -2,7 +2,7 @@ import pytest
 import math
 import numpy as np
 from time import time
-from func.quotes import Quotes, CLOSE
+from curvepy.quotes import Quotes, CLOSE
 from intervalpy import Interval
 from .quote import Quote
 

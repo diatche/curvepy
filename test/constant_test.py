@@ -1,7 +1,7 @@
 import pytest
 import math
 import numpy as np
-from func.constant import Constant
+from curvepy.constant import Constant
 
 def test_constant():
     c = Constant(1)

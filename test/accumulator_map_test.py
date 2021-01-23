@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from func import Points
+from curvepy import Points
 from . import test_util
 
 

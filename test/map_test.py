@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
-from func.constant import Constant
-from func.points import Points
+from curvepy.constant import Constant
+from curvepy.points import Points
 from . import test_util
 
 def test_map():

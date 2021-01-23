@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "func"
+name = "curvepy"
 version = "0.1.0"
 description = "A mathematical and financial function curve utility library."
 
@@ -15,6 +15,7 @@ repository = "https://github.com/diatche/func"
 homepage = "https://github.com/diatche/func"
 
 keywords = [
+    'curve',
     'func',
     'function',
     'sma',

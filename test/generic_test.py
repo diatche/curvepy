@@ -1,5 +1,5 @@
 import pytest
-from func.generic import Generic
+from curvepy.generic import Generic
 
 def test_generic():
     g = Generic(lambda x: x * 2, domain=(0, 1))

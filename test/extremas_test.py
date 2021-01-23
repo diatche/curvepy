@@ -1,8 +1,8 @@
 import pytest
 import numpy as np
-from func.extremas import Extremas
-from func.constant import Constant
-from func.points import Points
+from curvepy.extremas import Extremas
+from curvepy.constant import Constant
+from curvepy.points import Points
 from . import test_util
 
 def test_extrema():

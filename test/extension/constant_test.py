@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from func.points import Points
+from curvepy.points import Points
 from .. import test_util
 
 def test_values():

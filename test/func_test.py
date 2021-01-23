@@ -2,11 +2,11 @@ import pytest
 import math
 import numpy as np
 from pytest import approx
-from func.func import Func
-from func.constant import Constant
-from func.points import Points
-from func.line import Line
-from func import Generic
+from curvepy.func import Func
+from curvepy.constant import Constant
+from curvepy.points import Points
+from curvepy.line import Line
+from curvepy import Generic
 from intervalpy import Interval
 from . import test_util
 

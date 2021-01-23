@@ -1,9 +1,9 @@
 import pytest
 import numpy as np
-from func.aggregate import Aggregate
-from func.constant import Constant
-from func.points import Points
-from func.generic import Generic
+from curvepy.aggregate import Aggregate
+from curvepy.constant import Constant
+from curvepy.points import Points
+from curvepy.generic import Generic
 from intervalpy import Interval
 from . import test_util
 

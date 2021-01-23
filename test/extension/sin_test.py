@@ -1,6 +1,6 @@
 import pytest
 from pytest import approx
-from func.sin import Sin
+from curvepy.sin import Sin
 
 
 def test_with_sin():
