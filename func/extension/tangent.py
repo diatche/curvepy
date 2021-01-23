@@ -25,6 +25,8 @@ class TangentExtension(Extension):
     def update_extension(self):
         if self.start:
             x = self.func.domain.start
+            if x is not None and self.func.domain.start_open and self.func.domain.contains(x + self.min_step):
+                x += self.min_step
             y = None
             d_y = None
             if self.regression_degree is not None:
@@ -52,6 +54,8 @@ class TangentExtension(Extension):
 
         if self.end:
             x = self.func.domain.end
+            if x is not None and self.func.domain.end_open and self.func.domain.contains(x - self.min_step):
+                x -= self.min_step
             y = None
             d_y = None
             if self.regression_degree is not None:

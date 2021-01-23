@@ -84,18 +84,6 @@ class Points(Func):
         self._did_change_points()
         self.end_update(domain)
 
-    def observe(self, observable):
-        """
-        Subscribes to an `Observable` of points and appends to existing data.
-        """
-        return observable.subscribe(self.append)
-
-    def observe_list(self, observable):
-        """
-        Subscribes to an `Observable` of lists of points and appends to existing data.
-        """
-        return observable.subscribe(self.append_list)
-
     def replace(self, point, or_append=False):
         if not self.domain.contains(point[0]):
             if or_append:
