@@ -25,9 +25,18 @@ Have a look at the [documentation](https://diatche.github.io/curvepy/).
 Basic usage:
 
 ```python
-from curvepy import Curve
+# Create a line
+from curvepy import Line
 
-# TODO
+line = Line(const=1, slope=2)
+assert line.y(0) == 1
+assert line.y(1) == 3
+
+# Function arithmetic
+line2 = Line(const=-1, slope=-2)
+line_sum = line1 + line2
+assert line_sum.y(0) == 0
+assert line_sum.y(1) == 0
 ```
 
 # Development
