@@ -1,0 +1,24 @@
+{
+    "python.pythonPath": ".venv/bin/python",
+    "python.testing.promptToConfigure": false,
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestPath": ".venv/bin/pytest",
+    "python.testing.pytestArgs": [
+        // "-m \"not algo\"", // run all tests except algorithm tests.
+        "-l", // show locals in tracebacks
+        // "-x", // exit instantly on first error or failed test
+        "--ff", // run all tests but run the last failures first
+        "--color=auto" // color terminal output (yes/no/auto)
+    ],
+    "files.exclude": {
+        "**/__pycache__": true
+    },
+    "files.watcherExclude": {
+        "**/.git/objects/**": true,
+        "**/.git/subtree-cache/**": true,
+        "**/.venv/**": true
+    },
+    "search.exclude": {
+        ".venv": true
+    }
+}
