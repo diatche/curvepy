@@ -1,6 +1,6 @@
 import math
 from .accumulator import Accumulator
-from .func import Func, MIN_STEP
+from .func import Curve, MIN_STEP
 from intervalpy import Interval
 
 class EMA(Accumulator):
@@ -13,7 +13,7 @@ class EMA(Accumulator):
     def __init__(self, func, degree, is_period=True, init=None, min_step=MIN_STEP, uniform=True):
         self.alpha = None
         self.period = None
-        self.init_func = Func.parse(init) if init is not None else None
+        self.init_func = Curve.parse(init) if init is not None else None
         if is_period:
             self.period = degree
         else:

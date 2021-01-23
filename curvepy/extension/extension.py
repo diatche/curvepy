@@ -1,7 +1,7 @@
-from ..func import Func, MIN_STEP
+from ..func import Curve, MIN_STEP
 from intervalpy import Interval
 
-class Extension(Func):
+class Extension(Curve):
 
     """
     Extends ends of a function.
@@ -15,7 +15,7 @@ class Extension(Func):
 
     def __init__(self, func, start=True, end=True, uniform=True, raise_on_empty=False, min_step=MIN_STEP):
         super().__init__(min_step=min_step)
-        self.func = Func.parse(func)
+        self.func = Curve.parse(func)
 
         if self.func.domain.is_negative_infinite:
             start = False

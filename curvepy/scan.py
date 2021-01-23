@@ -1,16 +1,16 @@
 import math
-from .func import Func, MIN_STEP
+from .func import Curve, MIN_STEP
 from .constant import Constant
 from intervalpy import Interval
 
-class Scan(Func):
+class Scan(Curve):
 
     def get_domain(self):
         return self.func.domain
 
     def __init__(self, func, tfm, min_step=MIN_STEP):
         super().__init__(min_step=min_step)
-        self.func = Func.parse(func)
+        self.func = Curve.parse(func)
         self.tfm = tfm
         self.scan_start = None
         self.current = None

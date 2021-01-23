@@ -1,9 +1,9 @@
-from .func import Func, MIN_STEP
+from .func import Curve, MIN_STEP
 from intervalpy import Interval
 from collections.abc import Sequence
 
 
-class Aggregate(Func):
+class Aggregate(Curve):
 
     def get_domain(self):
         domains = list(map(lambda f: f.domain, self.funcs))
@@ -16,7 +16,7 @@ class Aggregate(Func):
         if not isinstance(funcs, Sequence):
             funcs = [funcs] + list(args)
         super().__init__()
-        self.funcs = Func.parse_many(funcs)
+        self.funcs = Curve.parse_many(funcs)
         self.tfm = tfm
         self.is_union = union
         self.operator = operator

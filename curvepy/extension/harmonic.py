@@ -2,7 +2,7 @@ import warnings
 from .extension import Extension
 from ..constant import Constant
 from ..empty import Empty
-from ..func import Func
+from ..func import Curve
 
 class HarmonicExtension(Extension):
 
@@ -89,4 +89,4 @@ class HarmonicExtension(Extension):
         self.macs = macs
         self.smas = smas
 
-        return Func.add_many([self._extension_offset, base_line] + macs)
+        return Curve.add_many([self._extension_offset, base_line] + macs)

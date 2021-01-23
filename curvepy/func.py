@@ -16,7 +16,7 @@ MIN_STEP = 1e-5
 
 _func_obj = None
 
-class Func:
+class Curve:
 
     _token_counter = 0
 
@@ -373,8 +373,8 @@ class Func:
         if begin is None and end is None:
             return 0
         
-        Func._token_counter += 1
-        token = Func._token_counter
+        Curve._token_counter += 1
+        token = Curve._token_counter
         domain = Interval.parse(domain, default_inf=True)
         obj_ref = None
 
@@ -481,16 +481,16 @@ class Func:
         return Offset(self, x, duration=duration)
 
     def add(self, func):
-        return Func.add_many([self, func])
+        return Curve.add_many([self, func])
 
     def subtract(self, func):
-        return Func.subtract_many([self, func])
+        return Curve.subtract_many([self, func])
 
     def multiply(self, func):
-        return Func.multiply_many([self, func])
+        return Curve.multiply_many([self, func])
 
     def divide(self, func):
-        return Func.divide_many([self, func])
+        return Curve.divide_many([self, func])
 
     def pow(self, power):
         return type(self).pow_many([self, power])
@@ -553,7 +553,7 @@ class Func:
     # def wave_extended(self, ref_func, min_deviation=0, start=None, step=None, min_step=MIN_STEP):
     #     if self.domain.is_positive_infinite:
     #         return self
-    #     ref_func = Func.parse(ref_func)
+    #     ref_func = Curve.parse(ref_func)
     #     extremas = Extremas(self, ref_func, min_deviation=min_deviation, start=start, step=step, min_step=min_step)
 
     # def mom(self, degree, duration, **kwargs):
@@ -633,8 +633,8 @@ class Func:
 
     def rsi(self, degree, **kwargs):
         d = self.differential()
-        du = Func.max([d, 0], ignore_empty=False)
-        dd = Func.max([-d, 0], ignore_empty=False)
+        du = Curve.max([d, 0], ignore_empty=False)
+        dd = Curve.max([-d, 0], ignore_empty=False)
         rs = du.ema(1 / degree, **kwargs) / dd.ema(1 / degree, **kwargs)
         rsi = 100 - 100 / (1 + rs)
         rsi.name = f'rsi({degree})'
@@ -685,7 +685,7 @@ class Func:
                     return v
             return None
 
-        funcs = Func.parse_many(funcs)
+        funcs = Curve.parse_many(funcs)
         return Aggregate(funcs, tfm=first_val, union=True, name='first')        
 
     @classmethod
@@ -704,7 +704,7 @@ class Func:
         def min_vals_with_empty(x, vals):
             return min(filter(lambda y: y is not None, vals), default=None)
 
-        funcs = Func.parse_many(funcs)
+        funcs = Curve.parse_many(funcs)
         t = min_vals_with_empty if ignore_empty else min_vals
         return Aggregate(funcs, tfm=t, union=ignore_empty, name='min')
 
@@ -724,7 +724,7 @@ class Func:
         def max_vals_with_empty(x, vals):
             return max(filter(lambda y: y is not None, vals), default=None)
 
-        funcs = Func.parse_many(funcs)
+        funcs = Curve.parse_many(funcs)
         t = max_vals_with_empty if ignore_empty else max_vals
         return Aggregate(funcs, tfm=t, union=ignore_empty, name='max')
 
@@ -848,7 +848,7 @@ class Func:
 
         if func is None:
             return None
-        elif isinstance(func, Func):
+        elif isinstance(func, Curve):
             return func
         elif callable(func):
             return Generic(func)
@@ -882,7 +882,7 @@ class Func:
 
         def next_func_constructor(fname):
             f = current_func or _func_obj
-            assert isinstance(f, Func)
+            assert isinstance(f, Curve)
             ftype = type(f)
             fconstructor = None
             fconstructor_from_instance = False
@@ -936,7 +936,7 @@ class Func:
                         base = int(base_str) if bool(base_str) else math.e
                         v = base ** v
                     
-                    if isinstance(v, Func):
+                    if isinstance(v, Curve):
                         # Allow chaining
                         current_func = v
                         continue
@@ -988,7 +988,7 @@ class Func:
                         del kwargs['@args']
 
                     if fconstructor_from_instance and current_func is None:
-                        current_func = Func.parse(args[0])
+                        current_func = Curve.parse(args[0])
                         del args[0]
                     elif not fconstructor_from_instance and current_func is not None:
                         # Add current function as first argument or to
@@ -1065,34 +1065,34 @@ class Func:
         return count
 
     def __add__(self, other):
-        return Func.add_many([self, other])
+        return Curve.add_many([self, other])
 
     def __sub__(self, other):
-        return Func.subtract_many([self, other])
+        return Curve.subtract_many([self, other])
 
     def __mul__(self, other):
-        return Func.multiply_many([self, other])
+        return Curve.multiply_many([self, other])
 
     def __truediv__(self, other):
-        return Func.divide_many([self, other])
+        return Curve.divide_many([self, other])
 
     def __pow__(self, other):
-        return Func.pow_many([self, other])
+        return Curve.pow_many([self, other])
 
     def __radd__(self, other):
-        return Func.add_many([other, self])
+        return Curve.add_many([other, self])
 
     def __rsub__(self, other):
-        return Func.subtract_many([other, self])
+        return Curve.subtract_many([other, self])
 
     def __rmul__(self, other):
-        return Func.multiply_many([other, self])
+        return Curve.multiply_many([other, self])
 
     def __rtruediv__(self, other):
-        return Func.divide_many([other, self])
+        return Curve.divide_many([other, self])
 
     def __rpow__(self, other):
-        return Func.pow_many([other, self])
+        return Curve.pow_many([other, self])
 
     def __neg__(self):
         return self.additive_inverse()
@@ -1129,4 +1129,4 @@ def _callable_arg_len(f, vararg_ret_val):
         arg_len -= 1
     return arg_len
 
-_func_obj = Func()
+_func_obj = Curve()

@@ -1,7 +1,7 @@
-from .func import Func, MIN_STEP
+from .func import Curve, MIN_STEP
 from intervalpy import Interval
 
-class Piecewise(Func):
+class Piecewise(Curve):
 
     def get_domain(self):
         return Interval.union(self.domains)
@@ -13,7 +13,7 @@ class Piecewise(Func):
         super().__init__()
         if len(funcs) != len(domains):
             raise Exception("Must specify sub-domains for all sub-functions in a piecewise function")
-        self.funcs = Func.parse_many(funcs)
+        self.funcs = Curve.parse_many(funcs)
         self.domains = Interval.parse_many(domains)
         unique_funcs = list(set(list(self.funcs)))
         self._observer_tokens = list(map(lambda f: f.add_observer(begin=self.begin_update, end=self.end_update, prioritize=True), unique_funcs))

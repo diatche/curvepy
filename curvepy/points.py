@@ -1,5 +1,5 @@
 import math
-from .func import Func, MIN_STEP
+from .func import Curve, MIN_STEP
 from intervalpy import Interval
 
 PREVIOUS_INTERPOLATION = -1
@@ -13,7 +13,7 @@ ALL_INTERPOLATIONS = [
 ]
 
 
-class Points(Func):
+class Points(Curve):
 
     class interpolation:
 

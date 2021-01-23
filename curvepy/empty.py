@@ -1,8 +1,8 @@
 import math
-from .func import Func, MIN_STEP
+from .func import Curve, MIN_STEP
 from intervalpy import Interval
 
-class Empty(Func):
+class Empty(Curve):
 
     def get_domain(self):
         return Interval.empty()

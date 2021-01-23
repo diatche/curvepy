@@ -1,6 +1,6 @@
 import bisect
 from .scan import Scan
-from .func import Func, MIN_STEP
+from .func import Curve, MIN_STEP
 from intervalpy import Interval
 
 class Extremas(Scan):
@@ -8,7 +8,7 @@ class Extremas(Scan):
     # TODO: Extremas doesn't need to be a subclass of `Scan` as it only needs to find the local extrema about a point.
 
     def __init__(self, func, ref_func, min_deviation=0, min_step=MIN_STEP):
-        self.ref_func = Func.parse(ref_func)
+        self.ref_func = Curve.parse(ref_func)
         self.min_deviation = abs(min_deviation)
         self.extremas = []
         self.extrema_xs = []

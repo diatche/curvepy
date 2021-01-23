@@ -1,7 +1,7 @@
-from .func import Func, MIN_STEP
+from .func import Curve, MIN_STEP
 from intervalpy import Interval
 
-class Map(Func):
+class Map(Curve):
 
     def get_domain(self):
         return self.func.domain
@@ -10,7 +10,7 @@ class Map(Func):
         if bool(func.min_step) and func.min_step > min_step:
             min_step = func.min_step
         super().__init__(min_step=min_step)
-        self.func = Func.parse(func)
+        self.func = Curve.parse(func)
         self.skip_none = skip_none
         self.name = name
 

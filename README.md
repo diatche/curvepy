@@ -25,7 +25,7 @@ Have a look at the [documentation](https://diatche.github.io/curvepy/).
 Basic usage:
 
 ```python
-from curvepy import Func
+from curvepy import Curve
 
 # TODO
 ```

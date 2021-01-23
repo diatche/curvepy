@@ -1,10 +1,10 @@
 import math
-from .func import Func, MIN_STEP
+from .func import Curve, MIN_STEP
 from intervalpy import Interval
 from pyduration import Duration
 
 
-class Offset(Func):
+class Offset(Curve):
 
     """
     Offset a function on the x-axis by a constant.
@@ -15,7 +15,7 @@ class Offset(Func):
 
     def __init__(self, func, offset, duration=None):
         super().__init__()
-        self.func = Func.parse(func)
+        self.func = Curve.parse(func)
         self.offset = offset
         self.duration = None
         if duration is not None:

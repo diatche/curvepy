@@ -1,7 +1,7 @@
-from .func import Func, MIN_STEP
+from .func import Curve, MIN_STEP
 from intervalpy import Interval
 
-class Generic(Func):
+class Generic(Curve):
 
     def get_domain(self):
         return self._domain

@@ -1,4 +1,4 @@
-from .func import Func, MIN_STEP
+from .func import Curve, MIN_STEP
 from .map import Map
 from .points import Points
 from intervalpy import Interval
@@ -16,7 +16,7 @@ CLOSE = 3
 VOLUME = 4
 
 
-class Quotes(Func):
+class Quotes(Curve):
     """
     Represents quotes as [open, high, low, close, (volume)].
     """

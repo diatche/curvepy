@@ -132,7 +132,7 @@ class WeaveExtension(Extension):
 
     # def setup(self):
     #     self.extension = Points([])
-    #     self.layers = Func.first([self.func, self.extension])
+    #     self.layers = Curve.first([self.func, self.extension])
     #     self.periods = []
     #     self.smas = []
     #     self.macs = []

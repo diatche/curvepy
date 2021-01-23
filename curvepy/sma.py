@@ -1,5 +1,5 @@
 import math
-from .func import Func, MIN_STEP
+from .func import Curve, MIN_STEP
 from .points import Points
 from .integral import Integral
 from intervalpy import Interval

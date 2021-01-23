@@ -2,7 +2,7 @@ import pytest
 import math
 import numpy as np
 from pytest import approx
-from curvepy.func import Func
+from curvepy.func import Curve
 from curvepy.constant import Constant
 from curvepy.points import Points
 from curvepy.line import Line
@@ -72,7 +72,7 @@ def test_func_update():
         nonlocal end_update_interval
         end_update_count += 1
         end_update_interval = domain
-    f = Func()
+    f = Curve()
     t = f.add_observer(domain=(0, 2), begin=begin_update, end=end_update)
 
     f.begin_update(Interval(1, 3))
@@ -115,7 +115,7 @@ def test_update_with_obj():
         nonlocal end_update_count
         end_update_count += 1
 
-    f = Func()
+    f = Curve()
 
     # Add and remove observer using object
     obj = T()
@@ -146,7 +146,7 @@ def test_update_with_obj_autoremove():
         nonlocal end_update_count
         end_update_count += 1
 
-    f = Func()
+    f = Curve()
 
     # Add and remove observer using object
     obj = T()
@@ -166,8 +166,8 @@ def test_update_with_obj_autoremove():
 
 def test_min_max():
     funcs = [2, Line(const=0, slope=1)]
-    minf = Func.min(funcs)
-    maxf = Func.max(funcs)
+    minf = Curve.min(funcs)
+    maxf = Curve.max(funcs)
 
     assert minf(0) == 0
     assert minf(1) == 1
@@ -184,7 +184,7 @@ def test_min_max():
 
 def test_first():
     funcs = [[(0, None), (1, 12), (2, None)], [(0, 1), (1, 1), (2, 1)]]
-    first = Func.first(funcs)
+    first = Curve.first(funcs)
     assert first(-1) is None
     assert first(0) == 1
     assert first(1) == 12
@@ -192,14 +192,14 @@ def test_first():
     assert first(3) is None
 
     funcs = [[(0, None), (1, 12), (2, None)], 1]
-    first = Func.first(funcs)
+    first = Curve.first(funcs)
     assert first(-1) == 1
     assert first(0) == 1
     assert first(1) == 12
     assert first(2) == 1
     assert first(3) == 1
 
-    first = Func.first([
+    first = Curve.first([
         Generic(lambda x: 1, domain=Interval(0, 2)),
         Generic(lambda x: 2, domain=Interval.positive_infinite(1))
     ])
@@ -279,7 +279,7 @@ def test_regression():
 
 
 def test_max():
-    f = Func.max([Points([(0, -1), (1, 0), (2, 1)]), 0])
+    f = Curve.max([Points([(0, -1), (1, 0), (2, 1)]), 0])
     assert f.domain == Interval.closed(0, 2)
     assert f.y(-1) is None
     assert f.y(0) == 0
@@ -287,7 +287,7 @@ def test_max():
     assert f.y(2) == 1
     assert f.y(3) is None
 
-    f = Func.max([0, Points([(0, -1), (1, 0), (2, 1)])])
+    f = Curve.max([0, Points([(0, -1), (1, 0), (2, 1)])])
     assert f.domain == Interval.closed(0, 2)
     assert f.y(-1) is None
     assert f.y(0) == 0
@@ -297,7 +297,7 @@ def test_max():
 
 
 def test_func_parse_descriptor_line():
-    f = Func.parse_descriptor({
+    f = Curve.parse_descriptor({
         '$line': {
             'points': [
                 [100.0, 1000.0],
@@ -311,89 +311,89 @@ def test_func_parse_descriptor_line():
 
 
 def test_func_parse_descriptor_add():
-    f = Func.parse_descriptor({ '$add': [1, 2] })
+    f = Curve.parse_descriptor({ '$add': [1, 2] })
     assert f.y(0) == 3
-    f = Func.parse_descriptor({ '$add': [1, 2, 3] })
+    f = Curve.parse_descriptor({ '$add': [1, 2, 3] })
     assert f.y(0) == 6
-    f = Func.parse_descriptor({ '$add': [1] })
+    f = Curve.parse_descriptor({ '$add': [1] })
     assert f.y(0) == 1
 
 
 def test_func_parse_descriptor_max():
-    f = Func.parse_descriptor({ '$max': [1, 2, 3, -1] })
+    f = Curve.parse_descriptor({ '$max': [1, 2, 3, -1] })
     assert f.y(0) == 3
 
 
 def test_func_parse_descriptor_min():
-    f = Func.parse_descriptor({ '$min': [1, 2, 3, -1] })
+    f = Curve.parse_descriptor({ '$min': [1, 2, 3, -1] })
     assert f.y(0) == -1
 
 
 def test_func_parse_descriptor_args_decorator():
-    f = Func.parse_descriptor({ '$add': { '@args': [10, 20] } })
+    f = Curve.parse_descriptor({ '$add': { '@args': [10, 20] } })
     assert f.y(0) == 30
 
 
 def test_func_parse_descriptor_fragment_date_decorator():
-    date = Func.parse_descriptor({ '@date': '2020-02-12 01:23+1200' }, fragment=True)
+    date = Curve.parse_descriptor({ '@date': '2020-02-12 01:23+1200' }, fragment=True)
     assert date == 1581427380
 
 
 def test_func_parse_descriptor_log_decorator():
-    f = Func.parse_descriptor({ '@log2': { '$add': [16, 16] } })
+    f = Curve.parse_descriptor({ '@log2': { '$add': [16, 16] } })
     assert f.y(0) == 256
 
-    v = Func.parse_descriptor({ '@log10': 10 }, fragment=True)
+    v = Curve.parse_descriptor({ '@log10': 10 }, fragment=True)
     assert v == 10
-    v = Func.parse_descriptor({ '@log': 10 }, fragment=True)
+    v = Curve.parse_descriptor({ '@log': 10 }, fragment=True)
     assert v == approx(10, abs=0.01)
 
 
 def test_func_parse_descriptor_constant():
-    f = Func.parse_descriptor({ '$constant': 10 })
+    f = Curve.parse_descriptor({ '$constant': 10 })
     assert f.y(0) == 10
 
 
 def test_func_parse_descriptor_log():
-    f = Func.parse_descriptor({ '$log': 10 })
+    f = Curve.parse_descriptor({ '$log': 10 })
     assert f.y(0) == approx(math.log(10), abs=0.01)
-    f = Func.parse_descriptor({ '$log': { '@args': [10], 'base': 10 } })
+    f = Curve.parse_descriptor({ '$log': { '@args': [10], 'base': 10 } })
     assert f.y(0) == 1
-    f = Func.parse_descriptor({ '$log2': 16 })
+    f = Curve.parse_descriptor({ '$log2': 16 })
     assert f.y(0) == 4
 
 
 def test_func_parse_descriptor_raised():
-    f = Func.parse_descriptor({ '$raised': { '@args': [4], 'base': 2 } })
+    f = Curve.parse_descriptor({ '$raised': { '@args': [4], 'base': 2 } })
     assert f.y(0) == 16
 
 
 def test_func_parse_descriptor_log2():
-    f = Func.parse_descriptor({ '$log2': 16 })
+    f = Curve.parse_descriptor({ '$log2': 16 })
     assert f.y(0) == 4
 
 
 def test_func_parse_descriptor_chain():
-    f = Func.parse_descriptor({ '$constant': 16, '$log': { 'base': 2 } })
+    f = Curve.parse_descriptor({ '$constant': 16, '$log': { 'base': 2 } })
     assert f.y(0) == 4
 
 
 def test_func_parse_descriptor_chain_with_instance_method():
-    f = Func.parse_descriptor({ '$constant': -16, '$abs': [] })
+    f = Curve.parse_descriptor({ '$constant': -16, '$abs': [] })
     assert f.y(0) == 16
 
 
 def test_func_parse_descriptor_chain_with_class_method():
-    f = Func.parse_descriptor({ '$constant': 16, '$max': [10] })
+    f = Curve.parse_descriptor({ '$constant': 16, '$max': [10] })
     assert f.y(0) == 16
 
 
 def test_func_parse_descriptor_chain_with_decorator():
-    f = Func.parse_descriptor({ '@log': { '$constant': 16 }, '$max': 10 })
+    f = Curve.parse_descriptor({ '@log': { '$constant': 16 }, '$max': 10 })
     assert f.y(0) == approx(16, abs=0.01)
-    f = Func.parse_descriptor({ '@log': { '$constant': 16 }, '$max': [10] })
+    f = Curve.parse_descriptor({ '@log': { '$constant': 16 }, '$max': [10] })
     assert f.y(0) == approx(16, abs=0.01)
 
     # 2 ^ (10 + 2) = 4096
-    f = Func.parse_descriptor({ '@log10': { '$constant': 10 }, '@log2': { '$add': 4 } })
+    f = Curve.parse_descriptor({ '@log10': { '$constant': 10 }, '@log2': { '$add': 4 } })
     assert f.y(0) == approx(4096, abs=0.01)
