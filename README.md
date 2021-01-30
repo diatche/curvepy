@@ -77,6 +77,20 @@ The following price will be in the form of a line (on a log chart) joining the p
 
 # Development
 
+## Setup
+
+Clone repository and run:
+
+```bash
+poetry install
+```
+
+## Running Unit Tests
+
+```bash
+poetry run test
+```
+
 ## Updating Documentation
 
 The module [pdoc3](https://pdoc3.github.io/pdoc/) is used to automatically generate documentation. To update the documentation:
