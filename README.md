@@ -22,7 +22,7 @@ pip3 install curvepy
 
 Have a look at the [documentation](https://diatche.github.io/curvepy/).
 
-Basic usage:
+## Basic usage:
 
 ```python
 # Create a line
@@ -37,6 +37,42 @@ line2 = Line(const=-1, slope=-2)
 line_sum = line1 + line2
 assert line_sum.y(0) == 0
 assert line_sum.y(1) == 0
+```
+
+## JSON Format
+
+**Function values:**
+
+Functions are denoted by `$`, for example, `$add`. Available functions:
+
+- `$add`: Adds values. Example: `{ "$add": [1, 2] }`, which results in `1 + 2`.
+- `$line`: Adds values. Example: `{ "$line": { "points": [[1, 2], [2, 3]] } }` which results in a line joining the points `(1, 2)` and `(2, 3)`.
+
+For other functions, refer to `Curve` documentation.
+
+Decorators modify applicable values and functions inside of them as well as deeply nested values. Available decorators:
+
+- `@date`: Converts all string values to seconds from Unix epoch. If no GMT offset is given, uses the local time zone at the time of parsing.
+- `@log`: Converts all number literals to log space. On exit from the decorator, the result is raised bacj by the base into linear space. Available varaints: `@log2`, `@log10`.
+- `@args`: Allows using both named and unamed arguments in a function. For example: `{ '$raised': { '@args': [4], 'base': 2 } }`, which will result in `pow(2, 4)`.
+
+A full example:
+
+The following price will be in the form of a line (on a log chart) joining the prices **10080.2** and **8975.0** on dates **8 May 2020 11:01 am** and **13 May 2020 5 am** respectively.
+
+```json
+{
+    "price": {
+        "@log": {
+            "$line": {
+                "points": [
+                    [{"@date": "2020-05-08 11:01"}, 10080.2],
+                    [{"@date": "2020-05-13 05:00"}, 8975.0]
+                ]
+            }
+        }
+    }
+}
 ```
 
 # Development
