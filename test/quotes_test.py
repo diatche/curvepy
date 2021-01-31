@@ -2,7 +2,7 @@ import pytest
 import math
 import numpy as np
 from time import time
-from curvepy.quotes import Quotes, CLOSE
+from curvepy.quotes import Quotes, OPEN, HIGH, LOW, CLOSE, VOLUME
 from intervalpy import Interval
 from .quote import Quote
 
@@ -38,6 +38,19 @@ def test_quotes():
     assert f(11.5)[CLOSE] == 3
     assert f(12)[CLOSE] == 5
     assert f(12.5) is None
+
+
+def test_quotes_encoder():
+    def encoder(q):
+        return (q['date'], (q['open'], q['high'], q['low'], q['close'], q['volume']))
+    points = [{ "date": 1, "open": 2, "high": 3, "low": 4, "close": 5, "volume": 6 }]
+    f = Quotes(1, quote_points=points, encoder=encoder)
+    p = f.y(1)
+    assert p[OPEN] == 2
+    assert p[HIGH] == 3
+    assert p[LOW] == 4
+    assert p[CLOSE] == 5
+    assert p[VOLUME] == 6
 
 
 def test_map():

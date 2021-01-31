@@ -76,6 +76,18 @@ class Curve:
     def y_end(self):
         return self.y(self.domain.end)
 
+    def first_point(self):
+        d = self.domain
+        if d.is_empty:
+            return None
+        return (d.start, self.y(d.start))
+
+    def last_point(self):
+        d = self.domain
+        if d.is_empty:
+            return None
+        return (d.end, self.y(d.end))
+
     def d_y(self, x, forward=False, min_step=MIN_STEP, limit=None):
         min_step = self.resolve_min_step(min_step)
         if forward:
