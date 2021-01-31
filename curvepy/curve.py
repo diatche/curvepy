@@ -545,15 +545,11 @@ class Curve:
         from .extension import ConstantExtension
         from .extension import TangentExtension
         from .extension import SinExtension
-        from .extension import HarmonicExtension
-        from .extension import WeaveExtension
 
         classes = [            
             ConstantExtension,
             TangentExtension,
             SinExtension,
-            HarmonicExtension,
-            WeaveExtension
         ]
 
         for c in classes:
