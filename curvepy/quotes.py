@@ -89,18 +89,26 @@ class Quotes(Curve):
 
     def get_domain(self):
         return self._quote_points.domain
-        # if domain.is_empty:
-        #     return domain
-        # return self.duration.span(domain, start_open=False)
 
-    def __init__(self, duration, quote_points=None, **kwargs):
+    def get_quote_domain(self):
+        domain = self._quote_points.domain
+        if domain.is_empty:
+            return domain
+        return self.duration.span(domain, start_open=False)
+
+    def __init__(self, duration, quote_points=None, encoder=None, **kwargs):
         """
-        `quote_points` are assumed to be in the form [timestamp, [o, h, l, c, v]]
-        in strict ascending order with no gaps and with the same duration as the receiver.
+        `quote_points` are assumed to be in the form [timestamp, [o, h, l, c, v]],
+        or in a suitable form for `encoder`, in strict ascending order with no gaps
+        and with the same duration as the receiver.
+
+        If `encoder` is specified, then it is used to map the structure of data into
+        the structure of `quote_points`.
         """
         duration = Duration.parse(duration)
         self.duration = duration
         super().__init__(min_step=duration.min_seconds * 0.01, **kwargs)
+        self.encoder = encoder
         self._quote_points = Points(
             [], interpolation=Points.interpolation.previous, uniform=duration.is_uniform)
         self._quote_points.add_observer(begin=self.begin_update, end=self.end_update, prioritize=True)
@@ -171,26 +179,39 @@ class Quotes(Curve):
 
     def append(self, quote_point):
         """
-        `quote_points` are assumed to be in the form [timestamp, [o, h, l, c, v]]
-        in strict ascending order with no gaps and with the same duration as the receiver.
+        `quote_points` are assumed to be in the form [timestamp, [o, h, l, c, v]],
+        or in a suitable form for `encoder`, in strict ascending order with no gaps
+        and with the same duration as the receiver.
         """
-        self.append_list([quote_point])
+        self.append_list([self.encode_one(quote_point)])
 
     def append_list(self, quote_points):
         """
-        `quote_points` are assumed to be in the form [timestamp, [o, h, l, c, v]]
-        in strict ascending order with no gaps and with the same duration as the receiver.
+        `quote_points` are assumed to be in the form [timestamp, [o, h, l, c, v]],
+        or in a suitable form for `encoder`, in strict ascending order with no gaps
+        and with the same duration as the receiver.
         """
         if self.domain.is_empty:
             return self.set(quote_points)
-        self._quote_points.append_list(quote_points)
+        self._quote_points.append_list(self.encode_many(quote_points))
 
     def set(self, quote_points):
         """
-        `quote_points` are assumed to be in the form [timestamp, [o, h, l, c, v]]
-        in strict ascending order with no gaps and with the same duration as the receiver.
+        `quote_points` are assumed to be in the form [timestamp, [o, h, l, c, v]],
+        or in a suitable form for `encoder`, in strict ascending order with no gaps
+        and with the same duration as the receiver.
         """
-        self._quote_points.set(quote_points)
+        self._quote_points.set(self.encode_many(quote_points))
+
+    def encode_one(self, quote_point):
+        if self.encoder is not None:
+            return self.encoder(quote_point)
+        return quote_point
+
+    def encode_many(self, quote_points):
+        if self.encoder is not None:
+            return [self.encoder(p) for p in quote_points]
+        return quote_points
 
     def sample(self, domain=None, min_step=MIN_STEP, step=None):
         points = self.sample_points(
