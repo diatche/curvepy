@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "curvepy"
-version = "0.1.0"
+version = "0.2.0"
 description = "A mathematical and financial function curve utility library."
 
 license = "MIT"
