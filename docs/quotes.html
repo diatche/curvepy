@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.9.1" />
+<meta name="generator" content="pdoc 0.9.2" />
 <title>curvepy.quotes API documentation</title>
 <meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
@@ -117,18 +117,26 @@ class Quotes(Curve):
 
     def get_domain(self):
         return self._quote_points.domain
-        # if domain.is_empty:
-        #     return domain
-        # return self.duration.span(domain, start_open=False)
 
-    def __init__(self, duration, quote_points=None, **kwargs):
+    def get_quote_domain(self):
+        domain = self._quote_points.domain
+        if domain.is_empty:
+            return domain
+        return self.duration.span(domain, start_open=False)
+
+    def __init__(self, duration, quote_points=None, encoder=None, **kwargs):
         &#34;&#34;&#34;
-        `quote_points` are assumed to be in the form [timestamp, [o, h, l, c, v]]
-        in strict ascending order with no gaps and with the same duration as the receiver.
+        `quote_points` are assumed to be in the form [timestamp, [o, h, l, c, v]],
+        or in a suitable form for `encoder`, in strict ascending order with no gaps
+        and with the same duration as the receiver.
+
+        If `encoder` is specified, then it is used to map the structure of data into
+        the structure of `quote_points`.
         &#34;&#34;&#34;
         duration = Duration.parse(duration)
         self.duration = duration
         super().__init__(min_step=duration.min_seconds * 0.01, **kwargs)
+        self.encoder = encoder
         self._quote_points = Points(
             [], interpolation=Points.interpolation.previous, uniform=duration.is_uniform)
         self._quote_points.add_observer(begin=self.begin_update, end=self.end_update, prioritize=True)
@@ -199,26 +207,39 @@ class Quotes(Curve):
 
     def append(self, quote_point):
         &#34;&#34;&#34;
-        `quote_points` are assumed to be in the form [timestamp, [o, h, l, c, v]]
-        in strict ascending order with no gaps and with the same duration as the receiver.
+        `quote_points` are assumed to be in the form [timestamp, [o, h, l, c, v]],
+        or in a suitable form for `encoder`, in strict ascending order with no gaps
+        and with the same duration as the receiver.
         &#34;&#34;&#34;
-        self.append_list([quote_point])
+        self.append_list([self.encode_one(quote_point)])
 
     def append_list(self, quote_points):
         &#34;&#34;&#34;
-        `quote_points` are assumed to be in the form [timestamp, [o, h, l, c, v]]
-        in strict ascending order with no gaps and with the same duration as the receiver.
+        `quote_points` are assumed to be in the form [timestamp, [o, h, l, c, v]],
+        or in a suitable form for `encoder`, in strict ascending order with no gaps
+        and with the same duration as the receiver.
         &#34;&#34;&#34;
         if self.domain.is_empty:
             return self.set(quote_points)
-        self._quote_points.append_list(quote_points)
+        self._quote_points.append_list(self.encode_many(quote_points))
 
     def set(self, quote_points):
         &#34;&#34;&#34;
-        `quote_points` are assumed to be in the form [timestamp, [o, h, l, c, v]]
-        in strict ascending order with no gaps and with the same duration as the receiver.
+        `quote_points` are assumed to be in the form [timestamp, [o, h, l, c, v]],
+        or in a suitable form for `encoder`, in strict ascending order with no gaps
+        and with the same duration as the receiver.
         &#34;&#34;&#34;
-        self._quote_points.set(quote_points)
+        self._quote_points.set(self.encode_many(quote_points))
+
+    def encode_one(self, quote_point):
+        if self.encoder is not None:
+            return self.encoder(quote_point)
+        return quote_point
+
+    def encode_many(self, quote_points):
+        if self.encoder is not None:
+            return [self.encoder(p) for p in quote_points]
+        return quote_points
 
     def sample(self, domain=None, min_step=MIN_STEP, step=None):
         points = self.sample_points(
@@ -258,12 +279,15 @@ class Quotes(Curve):
 <dl>
 <dt id="curvepy.quotes.Quotes"><code class="flex name class">
 <span>class <span class="ident">Quotes</span></span>
-<span>(</span><span>duration, quote_points=None, **kwargs)</span>
+<span>(</span><span>duration, quote_points=None, encoder=None, **kwargs)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Represents quotes as [open, high, low, close, (volume)].</p>
-<p><code>quote_points</code> are assumed to be in the form [timestamp, [o, h, l, c, v]]
-in strict ascending order with no gaps and with the same duration as the receiver.</p></div>
+<p><code>quote_points</code> are assumed to be in the form [timestamp, [o, h, l, c, v]],
+or in a suitable form for <code>encoder</code>, in strict ascending order with no gaps
+and with the same duration as the receiver.</p>
+<p>If <code>encoder</code> is specified, then it is used to map the structure of data into
+the structure of <code>quote_points</code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -341,18 +365,26 @@ in strict ascending order with no gaps and with the same duration as the receive
 
     def get_domain(self):
         return self._quote_points.domain
-        # if domain.is_empty:
-        #     return domain
-        # return self.duration.span(domain, start_open=False)
 
-    def __init__(self, duration, quote_points=None, **kwargs):
+    def get_quote_domain(self):
+        domain = self._quote_points.domain
+        if domain.is_empty:
+            return domain
+        return self.duration.span(domain, start_open=False)
+
+    def __init__(self, duration, quote_points=None, encoder=None, **kwargs):
         &#34;&#34;&#34;
-        `quote_points` are assumed to be in the form [timestamp, [o, h, l, c, v]]
-        in strict ascending order with no gaps and with the same duration as the receiver.
+        `quote_points` are assumed to be in the form [timestamp, [o, h, l, c, v]],
+        or in a suitable form for `encoder`, in strict ascending order with no gaps
+        and with the same duration as the receiver.
+
+        If `encoder` is specified, then it is used to map the structure of data into
+        the structure of `quote_points`.
         &#34;&#34;&#34;
         duration = Duration.parse(duration)
         self.duration = duration
         super().__init__(min_step=duration.min_seconds * 0.01, **kwargs)
+        self.encoder = encoder
         self._quote_points = Points(
             [], interpolation=Points.interpolation.previous, uniform=duration.is_uniform)
         self._quote_points.add_observer(begin=self.begin_update, end=self.end_update, prioritize=True)
@@ -423,26 +455,39 @@ in strict ascending order with no gaps and with the same duration as the receive
 
     def append(self, quote_point):
         &#34;&#34;&#34;
-        `quote_points` are assumed to be in the form [timestamp, [o, h, l, c, v]]
-        in strict ascending order with no gaps and with the same duration as the receiver.
+        `quote_points` are assumed to be in the form [timestamp, [o, h, l, c, v]],
+        or in a suitable form for `encoder`, in strict ascending order with no gaps
+        and with the same duration as the receiver.
         &#34;&#34;&#34;
-        self.append_list([quote_point])
+        self.append_list([self.encode_one(quote_point)])
 
     def append_list(self, quote_points):
         &#34;&#34;&#34;
-        `quote_points` are assumed to be in the form [timestamp, [o, h, l, c, v]]
-        in strict ascending order with no gaps and with the same duration as the receiver.
+        `quote_points` are assumed to be in the form [timestamp, [o, h, l, c, v]],
+        or in a suitable form for `encoder`, in strict ascending order with no gaps
+        and with the same duration as the receiver.
         &#34;&#34;&#34;
         if self.domain.is_empty:
             return self.set(quote_points)
-        self._quote_points.append_list(quote_points)
+        self._quote_points.append_list(self.encode_many(quote_points))
 
     def set(self, quote_points):
         &#34;&#34;&#34;
-        `quote_points` are assumed to be in the form [timestamp, [o, h, l, c, v]]
-        in strict ascending order with no gaps and with the same duration as the receiver.
+        `quote_points` are assumed to be in the form [timestamp, [o, h, l, c, v]],
+        or in a suitable form for `encoder`, in strict ascending order with no gaps
+        and with the same duration as the receiver.
         &#34;&#34;&#34;
-        self._quote_points.set(quote_points)
+        self._quote_points.set(self.encode_many(quote_points))
+
+    def encode_one(self, quote_point):
+        if self.encoder is not None:
+            return self.encoder(quote_point)
+        return quote_point
+
+    def encode_many(self, quote_points):
+        if self.encoder is not None:
+            return [self.encoder(p) for p in quote_points]
+        return quote_points
 
     def sample(self, domain=None, min_step=MIN_STEP, step=None):
         points = self.sample_points(
@@ -648,38 +693,72 @@ or to anticipate possible reversals.</p></div>
 <span>def <span class="ident">append</span></span>(<span>self, quote_point)</span>
 </code></dt>
 <dd>
-<div class="desc"><p><code>quote_points</code> are assumed to be in the form [timestamp, [o, h, l, c, v]]
-in strict ascending order with no gaps and with the same duration as the receiver.</p></div>
+<div class="desc"><p><code>quote_points</code> are assumed to be in the form [timestamp, [o, h, l, c, v]],
+or in a suitable form for <code>encoder</code>, in strict ascending order with no gaps
+and with the same duration as the receiver.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def append(self, quote_point):
     &#34;&#34;&#34;
-    `quote_points` are assumed to be in the form [timestamp, [o, h, l, c, v]]
-    in strict ascending order with no gaps and with the same duration as the receiver.
+    `quote_points` are assumed to be in the form [timestamp, [o, h, l, c, v]],
+    or in a suitable form for `encoder`, in strict ascending order with no gaps
+    and with the same duration as the receiver.
     &#34;&#34;&#34;
-    self.append_list([quote_point])</code></pre>
+    self.append_list([self.encode_one(quote_point)])</code></pre>
 </details>
 </dd>
 <dt id="curvepy.quotes.Quotes.append_list"><code class="name flex">
 <span>def <span class="ident">append_list</span></span>(<span>self, quote_points)</span>
 </code></dt>
 <dd>
-<div class="desc"><p><code>quote_points</code> are assumed to be in the form [timestamp, [o, h, l, c, v]]
-in strict ascending order with no gaps and with the same duration as the receiver.</p></div>
+<div class="desc"><p><code>quote_points</code> are assumed to be in the form [timestamp, [o, h, l, c, v]],
+or in a suitable form for <code>encoder</code>, in strict ascending order with no gaps
+and with the same duration as the receiver.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def append_list(self, quote_points):
     &#34;&#34;&#34;
-    `quote_points` are assumed to be in the form [timestamp, [o, h, l, c, v]]
-    in strict ascending order with no gaps and with the same duration as the receiver.
+    `quote_points` are assumed to be in the form [timestamp, [o, h, l, c, v]],
+    or in a suitable form for `encoder`, in strict ascending order with no gaps
+    and with the same duration as the receiver.
     &#34;&#34;&#34;
     if self.domain.is_empty:
         return self.set(quote_points)
-    self._quote_points.append_list(quote_points)</code></pre>
+    self._quote_points.append_list(self.encode_many(quote_points))</code></pre>
+</details>
+</dd>
+<dt id="curvepy.quotes.Quotes.encode_many"><code class="name flex">
+<span>def <span class="ident">encode_many</span></span>(<span>self, quote_points)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def encode_many(self, quote_points):
+    if self.encoder is not None:
+        return [self.encoder(p) for p in quote_points]
+    return quote_points</code></pre>
+</details>
+</dd>
+<dt id="curvepy.quotes.Quotes.encode_one"><code class="name flex">
+<span>def <span class="ident">encode_one</span></span>(<span>self, quote_point)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def encode_one(self, quote_point):
+    if self.encoder is not None:
+        return self.encoder(quote_point)
+    return quote_point</code></pre>
 </details>
 </dd>
 <dt id="curvepy.quotes.Quotes.first_quote"><code class="name flex">
@@ -706,6 +785,22 @@ in strict ascending order with no gaps and with the same duration as the receive
 </summary>
 <pre><code class="python">def get_domain(self):
     return self._quote_points.domain</code></pre>
+</details>
+</dd>
+<dt id="curvepy.quotes.Quotes.get_quote_domain"><code class="name flex">
+<span>def <span class="ident">get_quote_domain</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_quote_domain(self):
+    domain = self._quote_points.domain
+    if domain.is_empty:
+        return domain
+    return self.duration.span(domain, start_open=False)</code></pre>
 </details>
 </dd>
 <dt id="curvepy.quotes.Quotes.get_range"><code class="name flex">
@@ -783,18 +878,20 @@ in strict ascending order with no gaps and with the same duration as the receive
 <span>def <span class="ident">set</span></span>(<span>self, quote_points)</span>
 </code></dt>
 <dd>
-<div class="desc"><p><code>quote_points</code> are assumed to be in the form [timestamp, [o, h, l, c, v]]
-in strict ascending order with no gaps and with the same duration as the receiver.</p></div>
+<div class="desc"><p><code>quote_points</code> are assumed to be in the form [timestamp, [o, h, l, c, v]],
+or in a suitable form for <code>encoder</code>, in strict ascending order with no gaps
+and with the same duration as the receiver.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def set(self, quote_points):
     &#34;&#34;&#34;
-    `quote_points` are assumed to be in the form [timestamp, [o, h, l, c, v]]
-    in strict ascending order with no gaps and with the same duration as the receiver.
+    `quote_points` are assumed to be in the form [timestamp, [o, h, l, c, v]],
+    or in a suitable form for `encoder`, in strict ascending order with no gaps
+    and with the same duration as the receiver.
     &#34;&#34;&#34;
-    self._quote_points.set(quote_points)</code></pre>
+    self._quote_points.set(self.encode_many(quote_points))</code></pre>
 </details>
 </dd>
 <dt id="curvepy.quotes.Quotes.trailing_high"><code class="name flex">
@@ -899,8 +996,11 @@ in strict ascending order with no gaps and with the same duration as the receive
 <li><code><a title="curvepy.quotes.Quotes.append" href="#curvepy.quotes.Quotes.append">append</a></code></li>
 <li><code><a title="curvepy.quotes.Quotes.append_list" href="#curvepy.quotes.Quotes.append_list">append_list</a></code></li>
 <li><code><a title="curvepy.quotes.Quotes.close" href="#curvepy.quotes.Quotes.close">close</a></code></li>
+<li><code><a title="curvepy.quotes.Quotes.encode_many" href="#curvepy.quotes.Quotes.encode_many">encode_many</a></code></li>
+<li><code><a title="curvepy.quotes.Quotes.encode_one" href="#curvepy.quotes.Quotes.encode_one">encode_one</a></code></li>
 <li><code><a title="curvepy.quotes.Quotes.first_quote" href="#curvepy.quotes.Quotes.first_quote">first_quote</a></code></li>
 <li><code><a title="curvepy.quotes.Quotes.get_domain" href="#curvepy.quotes.Quotes.get_domain">get_domain</a></code></li>
+<li><code><a title="curvepy.quotes.Quotes.get_quote_domain" href="#curvepy.quotes.Quotes.get_quote_domain">get_quote_domain</a></code></li>
 <li><code><a title="curvepy.quotes.Quotes.get_range" href="#curvepy.quotes.Quotes.get_range">get_range</a></code></li>
 <li><code><a title="curvepy.quotes.Quotes.high" href="#curvepy.quotes.Quotes.high">high</a></code></li>
 <li><code><a title="curvepy.quotes.Quotes.hl2" href="#curvepy.quotes.Quotes.hl2">hl2</a></code></li>
@@ -924,7 +1024,7 @@ in strict ascending order with no gaps and with the same duration as the receive
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
 </footer>
 </body>
 </html>

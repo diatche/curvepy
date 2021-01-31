@@ -11,6 +11,7 @@
         "**/.venv/**": true
     },
     "search.exclude": {
-        ".venv": true
+        ".venv": true,
+        "docs": true
     }
 }

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.9.1" />
+<meta name="generator" content="pdoc 0.9.2" />
 <title>curvepy.curve API documentation</title>
 <meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
@@ -103,6 +103,18 @@ class Curve:
 
     def y_end(self):
         return self.y(self.domain.end)
+
+    def first_point(self):
+        d = self.domain
+        if d.is_empty:
+            return None
+        return (d.start, self.y(d.start))
+
+    def last_point(self):
+        d = self.domain
+        if d.is_empty:
+            return None
+        return (d.end, self.y(d.end))
 
     def d_y(self, x, forward=False, min_step=MIN_STEP, limit=None):
         min_step = self.resolve_min_step(min_step)
@@ -561,15 +573,11 @@ class Curve:
         from .extension import ConstantExtension
         from .extension import TangentExtension
         from .extension import SinExtension
-        from .extension import HarmonicExtension
-        from .extension import WeaveExtension
 
         classes = [            
             ConstantExtension,
             TangentExtension,
             SinExtension,
-            HarmonicExtension,
-            WeaveExtension
         ]
 
         for c in classes:
@@ -1239,6 +1247,18 @@ _func_obj = Curve()</code></pre>
     def y_end(self):
         return self.y(self.domain.end)
 
+    def first_point(self):
+        d = self.domain
+        if d.is_empty:
+            return None
+        return (d.start, self.y(d.start))
+
+    def last_point(self):
+        d = self.domain
+        if d.is_empty:
+            return None
+        return (d.end, self.y(d.end))
+
     def d_y(self, x, forward=False, min_step=MIN_STEP, limit=None):
         min_step = self.resolve_min_step(min_step)
         if forward:
@@ -1696,15 +1716,11 @@ _func_obj = Curve()</code></pre>
         from .extension import ConstantExtension
         from .extension import TangentExtension
         from .extension import SinExtension
-        from .extension import HarmonicExtension
-        from .extension import WeaveExtension
 
         classes = [            
             ConstantExtension,
             TangentExtension,
             SinExtension,
-            HarmonicExtension,
-            WeaveExtension
         ]
 
         for c in classes:
@@ -3212,15 +3228,11 @@ def update_interval(self):
     from .extension import ConstantExtension
     from .extension import TangentExtension
     from .extension import SinExtension
-    from .extension import HarmonicExtension
-    from .extension import WeaveExtension
 
     classes = [            
         ConstantExtension,
         TangentExtension,
         SinExtension,
-        HarmonicExtension,
-        WeaveExtension
     ]
 
     for c in classes:
@@ -3228,6 +3240,22 @@ def update_interval(self):
             return c(self, start=start, end=end, raise_on_empty=raise_on_empty, **kwds)
     
     raise Exception(&#39;Unknown extension type&#39;)</code></pre>
+</details>
+</dd>
+<dt id="curvepy.curve.Curve.first_point"><code class="name flex">
+<span>def <span class="ident">first_point</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def first_point(self):
+    d = self.domain
+    if d.is_empty:
+        return None
+    return (d.start, self.y(d.start))</code></pre>
 </details>
 </dd>
 <dt id="curvepy.curve.Curve.get_domain"><code class="name flex">
@@ -3311,6 +3339,22 @@ are proportional to the golden ratio.</p></div>
     from .integral import Integral
 
     return Integral(self, const=const, interpolation=interpolation, uniform=uniform)</code></pre>
+</details>
+</dd>
+<dt id="curvepy.curve.Curve.last_point"><code class="name flex">
+<span>def <span class="ident">last_point</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def last_point(self):
+    d = self.domain
+    if d.is_empty:
+        return None
+    return (d.end, self.y(d.end))</code></pre>
 </details>
 </dd>
 <dt id="curvepy.curve.Curve.log"><code class="name flex">
@@ -4005,11 +4049,13 @@ are proportional to the golden ratio.</p></div>
 <li><code><a title="curvepy.curve.Curve.end_update" href="#curvepy.curve.Curve.end_update">end_update</a></code></li>
 <li><code><a title="curvepy.curve.Curve.extension" href="#curvepy.curve.Curve.extension">extension</a></code></li>
 <li><code><a title="curvepy.curve.Curve.first" href="#curvepy.curve.Curve.first">first</a></code></li>
+<li><code><a title="curvepy.curve.Curve.first_point" href="#curvepy.curve.Curve.first_point">first_point</a></code></li>
 <li><code><a title="curvepy.curve.Curve.get_domain" href="#curvepy.curve.Curve.get_domain">get_domain</a></code></li>
 <li><code><a title="curvepy.curve.Curve.get_range" href="#curvepy.curve.Curve.get_range">get_range</a></code></li>
 <li><code><a title="curvepy.curve.Curve.harmonic_smas" href="#curvepy.curve.Curve.harmonic_smas">harmonic_smas</a></code></li>
 <li><code><a title="curvepy.curve.Curve.integral" href="#curvepy.curve.Curve.integral">integral</a></code></li>
 <li><code><a title="curvepy.curve.Curve.is_updating" href="#curvepy.curve.Curve.is_updating">is_updating</a></code></li>
+<li><code><a title="curvepy.curve.Curve.last_point" href="#curvepy.curve.Curve.last_point">last_point</a></code></li>
 <li><code><a title="curvepy.curve.Curve.log" href="#curvepy.curve.Curve.log">log</a></code></li>
 <li><code><a title="curvepy.curve.Curve.log_many" href="#curvepy.curve.Curve.log_many">log_many</a></code></li>
 <li><code><a title="curvepy.curve.Curve.map" href="#curvepy.curve.Curve.map">map</a></code></li>
@@ -4061,7 +4107,7 @@ are proportional to the golden ratio.</p></div>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
 </footer>
 </body>
 </html>

@@ -99,3 +99,5 @@ The module [pdoc3](https://pdoc3.github.io/pdoc/) is used to automatically gener
 2. Navigate to project root and install dependencies: `poetry install`.
 3. Generate documetation files with: `pdoc3 -o docs --html curvepy`.
 4. The new files will be in `docs/curvepy`. Move them to `docs/` and replace existing files.
+
+If you get errors about missing modules, make sure you have activated the python enviroment (in .venv) and that there are no python version mismatches. If so, use `poetry env use <python version>; poetry install` to fix.
